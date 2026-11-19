@@ -1,0 +1,57 @@
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: immo
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: immo
+    volumes:
+      - db:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U immo"]
+      interval: 5s
+      retries: 10
+
+  agent:
+    build: ./my-agent
+    restart: unless-stopped
+    depends_on:
+      db: { condition: service_healthy }
+      browser: { condition: service_started }
+    environment:
+      DATABASE_URL: postgres://immo:${POSTGRES_PASSWORD}@db:5432/immo
+      AGENT_PASSWORD: ${AGENT_PASSWORD:?set AGENT_PASSWORD in .env}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:?set ANTHROPIC_API_KEY in .env}
+      BROWSER_URL: http://browser:9000
+      BROWSER_TOKEN: ${BROWSER_TOKEN:-change-me-browser}
+    volumes:
+      - agent:/app/.eve/.workflow-data   # sessions survive restarts
+
+  web:
+    build: ./web
+    restart: unless-stopped
+    depends_on:
+      db: { condition: service_healthy }
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    environment:
+      DATABASE_URL: postgres://immo:${POSTGRES_PASSWORD}@db:5432/immo
+      AGENT_URL: http://agent:2000
+      AGENT_PASSWORD: ${AGENT_PASSWORD}
+      APP_LANG: ${APP_LANG:-fr}
+
+  # Real stealth Chromium (headed, in a virtual display) that the agent drives: opens pages, clicks, fills forms.
+  browser:
+    build: ./browser
+    restart: unless-stopped
+    shm_size: 1gb
+    environment:
+      BROWSER_TOKEN: ${BROWSER_TOKEN:-change-me-browser}
+      BROWSER_PROXY: ${BROWSER_PROXY:-}   # optional residential proxy if a site still blocks your IP
+      HEADLESS: ${BROWSER_HEADLESS:-0}
+
+volumes:
+  db:
+  agent:

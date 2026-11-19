@@ -1,0 +1,29 @@
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--background); color: var(--foreground); font: 400 var(--text-sm, .875rem)/1.5 var(--font-sans), system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+.shell { max-width: 1120px; margin: 0 auto; padding: 0 24px 64px; }
+.bar { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 28px; }
+.brand { font-weight: 600; letter-spacing: -.01em; text-decoration: none; }
+.nav { display: flex; gap: 20px; }
+.nav a { text-decoration: none; color: var(--text-secondary); }
+.nav a[aria-current="page"], .nav a:hover { color: var(--foreground); }
+.metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px; }
+.toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 12px; }
+.muted { color: var(--text-muted); }
+.row { display: flex; align-items: center; gap: 12px; }
+.panel { border: 1px solid var(--border); border-radius: var(--radius-panel, 1rem); padding: 20px; margin-bottom: 16px; background: var(--surface); }
+.stack { display: grid; gap: 20px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.onboard { max-width: 560px; margin: 8vh auto 0; }
+.onboard h1 { font-size: var(--text-2xl, 1.75rem); letter-spacing: -.02em; margin: 28px 0 24px; }
+.actions { display: flex; justify-content: space-between; margin-top: 28px; }
+.err { color: var(--danger); }
+.thumb { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; background: var(--surface-muted); }
+.title { display: flex; align-items: center; gap: 12px; }
+h2 { font-size: var(--text-base, 1rem); margin: 0 0 12px; font-weight: 600; }
+@media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } }
+td, th { white-space: nowrap; }
+td:first-child { white-space: normal; }
+.title { text-decoration: none; }
+.title:hover span { text-decoration: underline; }
